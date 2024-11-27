@@ -13,7 +13,5 @@ export class CustomWorld extends World implements ICustomWorld {
 	}
 }
 
-
-
 setDefaultTimeout(DEFAULT_TIMEOUT);
 setWorldConstructor(CustomWorld)
