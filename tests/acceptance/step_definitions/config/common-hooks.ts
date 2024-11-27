@@ -5,11 +5,9 @@ import {
 } from '@playwright/test'
 import { After, AfterAll, Before, BeforeAll, ITestCaseHookParameter, Status } from '@cucumber/cucumber'
 import { spawn } from "child_process";
-import { readFile } from "fs/promises";
 
 let browser: ChromiumBrowser
 let serverProcess;
-
 
 BeforeAll(async function () {
 
@@ -45,22 +43,6 @@ After(async function (this: ICustomWorld, { result }: ITestCaseHookParameter) {
 	await this.context?.close()
 })
 
-After(async function (this: ICustomWorld, { result }: ITestCaseHookParameter) {
-	if (result) {
-		if (result.status !== Status.PASSED) {
-			const videoPath = await this.page!.video()!.path();
-            const videoBuffer = await readFile(videoPath); // Lee el video como un Buffer
-            const base64Video = videoBuffer.toString('base64'); // Convierte el Buffer a base64
-
-            // Adjunta el video HTML al reporte
-            await this.attach(base64Video, 'base64:video/webm');
-
-		} else if (result.status === Status.PASSED) {
-			this.page?.video()?.delete()
-		}
-	}
-})
-
 AfterAll(async function () {
 	await browser.close()
 	if (serverProcess && serverProcess.exitCode === null) {
@@ -69,4 +51,3 @@ AfterAll(async function () {
 	}
 	console.log('Webserver process killed and ending all tests');
 });
-
